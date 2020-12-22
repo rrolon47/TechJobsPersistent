@@ -30,7 +30,7 @@ namespace TechJobsPersistent.Controllers
         }
 
         [HttpGet("/Add")]
-        public IActionResult AddJob()
+        public IActionResult Add()
         {
             List<Employer> employers = context.Employers.ToList();
             AddJobViewModel addJobViewModel = new AddJobViewModel(employers);
