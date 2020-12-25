@@ -13,20 +13,18 @@ namespace TechJobsPersistent.ViewModels
         [Required(ErrorMessage ="Job name is required")]
         public string Name { get; set; }
 
+        [Required(ErrorMessage = "Employer is required. Add new employer if necessary.")] 
         public int EmployerId { get; set; }
-        [Required(ErrorMessage = "Employer is required. Add new employer if necessary.")]
         public  List<SelectListItem> Employers { get; set; }
 
-        public int SkillId { get; set; }
-        [Required(ErrorMessage ="Skills are required. Add new skill if necessary.")]
+        //[Required(ErrorMessage ="Skills are required. Add new skill if necessary.")]
+        //public int SkillId { get; set; }
         public List<Skill> Skills { get; set; }
 
-        public AddJobViewModel(List<Employer> employers, List<Skill> skills)
+        public AddJobViewModel(List<Employer> employers, List<Skill> possibleSkills)
         {
             Employers = new List<SelectListItem>();
-            Skills = skills;
-
-
+            
             foreach (var employer in employers)
             {
                 Employers.Add(new SelectListItem
@@ -35,6 +33,8 @@ namespace TechJobsPersistent.ViewModels
                     Text = employer.Name
                 });
             }
+
+            Skills = possibleSkills;
         }
 
         public AddJobViewModel() { }

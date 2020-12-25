@@ -24,7 +24,9 @@ namespace TechJobsPersistent.Controllers
 
         public IActionResult Index()
         {
-            List<Job> jobs = context.Jobs.Include(j => j.Employer).ToList();
+            List<Job> jobs = context.Jobs
+                .Include(j => j.Employer)
+                .ToList();
 
             return View(jobs);
         }
@@ -43,34 +45,41 @@ namespace TechJobsPersistent.Controllers
         {
             if (ModelState.IsValid) 
             { 
-                Employer theEmployer = context.Employers.Find(addJobViewModel.EmployerId);
 
                 Job newJob = new Job
                 {
                     Name = addJobViewModel.Name,
                     EmployerId = addJobViewModel.EmployerId,
-                    Employer = theEmployer
                 };
 
                 foreach (var item in selectedSkills)
                 {
-                    JobSkill jobSkill = new JobSkill
-                    { 
-                        JobId = newJob.Id,
-                        Job = newJob,
-                        SkillId = int.Parse(item),
-                        Skill = context.Skills.Find(int.Parse(item))
-                    };
-                    context.JobSkills.Add(jobSkill);
+                    int skillId = int.Parse(item);
+                    int jobId = newJob.Id;
+
+                    List<JobSkill> existingTableItems = context.JobSkills
+                         .Where(js => js.JobId == jobId)
+                        .Where(js => js.SkillId == skillId)
+                        .ToList();
+
+                    if (existingTableItems.Count == 0)
+                    {
+                        JobSkill jobSkill = new JobSkill
+                        {
+                            JobId = jobId,
+                            SkillId = skillId
+                        };
+                        context.JobSkills.Add(jobSkill);
+                    }
                 }
 
                 context.Jobs.Add(newJob);
                 context.SaveChanges();
 
-                return Redirect("Index");
+                return Redirect("Home");
             }
 
-            return View("add", addJobViewModel);
+            return View(addJobViewModel);
         }
 
         public IActionResult Detail(int id)
